@@ -4,10 +4,10 @@ import br.com.jeyciane.APITests.domain.User;
 import br.com.jeyciane.APITests.domain.dto.UserDTO;
 import br.com.jeyciane.APITests.repositories.UserRepository;
 import br.com.jeyciane.APITests.services.UserService;
+import br.com.jeyciane.APITests.services.exceptions.DataIntegratyViolationException;
 import br.com.jeyciane.APITests.services.exceptions.ObjectNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,7 +33,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(UserDTO obj) {
+        findByEmail(obj);
         return userRepository.save(modelMapper.map(obj,User.class));
+    }
+
+    public void findByEmail(UserDTO obj){
+        Optional<User> user = userRepository.findByEmail(obj.getEmail());
+        if (user.isPresent()){
+            throw new DataIntegratyViolationException("Email já cadastrado no sistema");
+        }
     }
 
 }
