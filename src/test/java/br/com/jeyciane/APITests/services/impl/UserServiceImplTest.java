@@ -31,6 +31,7 @@ class UserServiceImplTest {
     public static final String PASSWORD = "123";
     public static final String OBJETO_NAO_ENCONTRADO = "Objeto não encontrado";
     public static final int INDEX = 0;
+    public static final String EMAIL_JA_CADASTRADO_NO_SISTEMA = "Email já cadastrado no sistema";
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -115,7 +116,7 @@ class UserServiceImplTest {
             userService.create(userDTO);
         }catch (Exception e){
             assertEquals(DataIntegratyViolationException.class, e.getClass());
-            assertEquals("Email já cadastrado no sistema", e.getMessage());
+            assertEquals(EMAIL_JA_CADASTRADO_NO_SISTEMA, e.getMessage());
         }
     }
 
@@ -132,6 +133,19 @@ class UserServiceImplTest {
         assertEquals(EMAIL,response.getEmail());
         assertEquals(PASSWORD,response.getPassword());
 
+    }
+
+    @Test
+    void whenUpdateThenReturnAnDataIntegrityViolationException() {
+        when(userRepository.findByEmail(anyString())).thenReturn(optionalUser); //mocando quando o findbyemail retonar um optinal
+
+        try{
+            optionalUser.get().setId(2); // se o id for diferente ele lança a exceção pois está tentando atualizar um email já existente com um id diferente
+            userService.create(userDTO);
+        }catch (Exception e){
+            assertEquals(DataIntegratyViolationException.class, e.getClass());
+            assertEquals(EMAIL_JA_CADASTRADO_NO_SISTEMA, e.getMessage());
+        }
     }
 
 
