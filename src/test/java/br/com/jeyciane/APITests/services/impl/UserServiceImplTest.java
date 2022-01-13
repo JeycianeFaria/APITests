@@ -3,6 +3,7 @@ package br.com.jeyciane.APITests.services.impl;
 import br.com.jeyciane.APITests.domain.User;
 import br.com.jeyciane.APITests.domain.dto.UserDTO;
 import br.com.jeyciane.APITests.repositories.UserRepository;
+import br.com.jeyciane.APITests.services.exceptions.ObjectNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,7 @@ class UserServiceImplTest {
     public static final String NOME = "Jey";
     public static final String EMAIL = "jey@zup.com";
     public static final String PASSWORD = "123";
+    public static final String OBJETO_NAO_ENCONTRADO = "Objeto não encontrado";
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -55,6 +57,19 @@ class UserServiceImplTest {
         assertEquals(ID, response.getId()); //verifica se o id é igual
         assertEquals(NOME, response.getName()); //verifica se o nome é igual
         assertEquals(EMAIL, response.getEmail()); //verifica se o email é igual
+    }
+
+    @Test
+    void whenFindByIdThenReturnAnObjectNotFoundException(){
+        when(userRepository.findById(anyInt())).thenThrow(new ObjectNotFoundException(OBJETO_NAO_ENCONTRADO));
+
+        try{
+            userService.findById(ID);
+        }catch (Exception e){
+            assertEquals(ObjectNotFoundException.class, e.getClass()); //verificando se está estourando a exceção certa
+            assertEquals(OBJETO_NAO_ENCONTRADO, e.getMessage()); //verificando se a mensagem estourada é a mesma que passamos
+        }
+
     }
 
     @Test
