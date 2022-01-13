@@ -3,6 +3,7 @@ package br.com.jeyciane.APITests.services.impl;
 import br.com.jeyciane.APITests.domain.User;
 import br.com.jeyciane.APITests.domain.dto.UserDTO;
 import br.com.jeyciane.APITests.repositories.UserRepository;
+import br.com.jeyciane.APITests.services.exceptions.DataIntegratyViolationException;
 import br.com.jeyciane.APITests.services.exceptions.ObjectNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,8 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -104,6 +104,19 @@ class UserServiceImplTest {
         assertEquals(EMAIL,response.getEmail());
         assertEquals(PASSWORD,response.getPassword());
 
+    }
+
+    @Test
+    void whenCreateThenReturnAnDataIntegrityViolationException() {
+        when(userRepository.findByEmail(anyString())).thenReturn(optionalUser); //mocando quando o findbyemail retonar um optinal
+
+        try{
+            optionalUser.get().setId(2); //tem que mudar o id pq o findByEmail estoura a exceção se o id for diferente, senão ele entende a atualização
+            userService.create(userDTO);
+        }catch (Exception e){
+            assertEquals(DataIntegratyViolationException.class, e.getClass());
+            assertEquals("Email já cadastrado no sistema", e.getMessage());
+        }
     }
 
     @Test
