@@ -26,11 +26,12 @@ import static org.mockito.Mockito.*;
 class UserServiceImplTest {
 
     public static final Integer ID = 1;
+    public static final Integer INDEX = 0;
     public static final String NOME = "Jey";
     public static final String EMAIL = "jey@zup.com";
     public static final String PASSWORD = "123";
+
     public static final String OBJETO_NAO_ENCONTRADO = "Objeto não encontrado";
-    public static final int INDEX = 0;
     public static final String EMAIL_JA_CADASTRADO_NO_SISTEMA = "Email já cadastrado no sistema";
 
     @InjectMocks
@@ -64,12 +65,12 @@ class UserServiceImplTest {
     }
 
     @Test
-    void whenFindByIdThenReturnAnObjectNotFoundException(){
+    void whenFindByIdThenReturnAnObjectNotFoundException() {
         when(userRepository.findById(anyInt())).thenThrow(new ObjectNotFoundException(OBJETO_NAO_ENCONTRADO));
 
-        try{
+        try {
             userService.findById(ID);
-        }catch (Exception e){
+        } catch (Exception e) {
             assertEquals(ObjectNotFoundException.class, e.getClass()); //verificando se está estourando a exceção certa
             assertEquals(OBJETO_NAO_ENCONTRADO, e.getMessage()); //verificando se a mensagem estourada é a mesma que passamos
         }
@@ -83,7 +84,7 @@ class UserServiceImplTest {
         List<User> response = userService.findAll();
 
         assertNotNull(response);
-        assertEquals(1,response.size());
+        assertEquals(1, response.size());
         assertEquals(User.class, response.get(INDEX).getClass());
 
         assertEquals(ID, response.get(INDEX).getId());
@@ -99,11 +100,11 @@ class UserServiceImplTest {
         User response = userService.create(userDTO);
 
         assertNotNull(response);
-        assertEquals(User.class,response.getClass());
-        assertEquals(ID,response.getId());
-        assertEquals(NOME,response.getName());
-        assertEquals(EMAIL,response.getEmail());
-        assertEquals(PASSWORD,response.getPassword());
+        assertEquals(User.class, response.getClass());
+        assertEquals(ID, response.getId());
+        assertEquals(NOME, response.getName());
+        assertEquals(EMAIL, response.getEmail());
+        assertEquals(PASSWORD, response.getPassword());
 
     }
 
@@ -111,10 +112,10 @@ class UserServiceImplTest {
     void whenCreateThenReturnAnDataIntegrityViolationException() {
         when(userRepository.findByEmail(anyString())).thenReturn(optionalUser); //mocando quando o findbyemail retonar um optinal
 
-        try{
+        try {
             optionalUser.get().setId(2); //tem que mudar o id pq o findByEmail estoura a exceção se o id for diferente, senão ele entende a atualização
             userService.create(userDTO);
-        }catch (Exception e){
+        } catch (Exception e) {
             assertEquals(DataIntegratyViolationException.class, e.getClass());
             assertEquals(EMAIL_JA_CADASTRADO_NO_SISTEMA, e.getMessage());
         }
@@ -127,11 +128,11 @@ class UserServiceImplTest {
         User response = userService.update(userDTO);
 
         assertNotNull(response);
-        assertEquals(User.class,response.getClass());
-        assertEquals(ID,response.getId());
-        assertEquals(NOME,response.getName());
-        assertEquals(EMAIL,response.getEmail());
-        assertEquals(PASSWORD,response.getPassword());
+        assertEquals(User.class, response.getClass());
+        assertEquals(ID, response.getId());
+        assertEquals(NOME, response.getName());
+        assertEquals(EMAIL, response.getEmail());
+        assertEquals(PASSWORD, response.getPassword());
 
     }
 
@@ -139,10 +140,10 @@ class UserServiceImplTest {
     void whenUpdateThenReturnAnDataIntegrityViolationException() {
         when(userRepository.findByEmail(anyString())).thenReturn(optionalUser); //mocando quando o findbyemail retonar um optinal
 
-        try{
+        try {
             optionalUser.get().setId(2); // se o id for diferente ele lança a exceção pois está tentando atualizar um email já existente com um id diferente
             userService.update(userDTO);
-        }catch (Exception e){
+        } catch (Exception e) {
             assertEquals(DataIntegratyViolationException.class, e.getClass());
             assertEquals(EMAIL_JA_CADASTRADO_NO_SISTEMA, e.getMessage());
         }
@@ -157,11 +158,11 @@ class UserServiceImplTest {
     }
 
     @Test
-    void deleteWithObjectNotFoundException(){
+    void deleteWithObjectNotFoundException() {
         when(userRepository.findById(anyInt())).thenThrow(new ObjectNotFoundException(OBJETO_NAO_ENCONTRADO));
-        try{
+        try {
             userService.delete(ID);
-        }catch(Exception e){
+        } catch (Exception e) {
             assertEquals(ObjectNotFoundException.class, e.getClass());
             assertEquals(OBJETO_NAO_ENCONTRADO, e.getMessage());
         }
