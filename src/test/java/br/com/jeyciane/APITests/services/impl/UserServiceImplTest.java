@@ -157,7 +157,14 @@ class UserServiceImplTest {
     }
 
     @Test
-    void findByEmail() {
+    void deleteWithObjectNotFoundException(){
+        when(userRepository.findById(anyInt())).thenThrow(new ObjectNotFoundException(OBJETO_NAO_ENCONTRADO));
+        try{
+            userService.delete(ID);
+        }catch(Exception e){
+            assertEquals(ObjectNotFoundException.class, e.getClass());
+            assertEquals(OBJETO_NAO_ENCONTRADO, e.getMessage());
+        }
     }
 
     private void startUser() {
