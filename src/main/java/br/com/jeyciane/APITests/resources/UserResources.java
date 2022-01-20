@@ -1,6 +1,5 @@
 package br.com.jeyciane.APITests.resources;
 
-import br.com.jeyciane.APITests.domain.User;
 import br.com.jeyciane.APITests.domain.dto.UserDTO;
 import br.com.jeyciane.APITests.services.UserService;
 import org.modelmapper.ModelMapper;
