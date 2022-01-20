@@ -20,7 +20,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class UserServiceImplTest {
@@ -141,16 +141,19 @@ class UserServiceImplTest {
 
         try{
             optionalUser.get().setId(2); // se o id for diferente ele lança a exceção pois está tentando atualizar um email já existente com um id diferente
-            userService.create(userDTO);
+            userService.update(userDTO);
         }catch (Exception e){
             assertEquals(DataIntegratyViolationException.class, e.getClass());
             assertEquals(EMAIL_JA_CADASTRADO_NO_SISTEMA, e.getMessage());
         }
     }
 
-
     @Test
-    void delete() {
+    void deleteWithSuccess() {
+        when(userRepository.findById(anyInt())).thenReturn(optionalUser);
+        doNothing().when(userRepository).deleteById(anyInt());
+        userService.delete(ID);
+        verify(userRepository, times(1)).deleteById(anyInt());
     }
 
     @Test
