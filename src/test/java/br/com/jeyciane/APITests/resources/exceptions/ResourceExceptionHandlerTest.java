@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -32,6 +34,7 @@ class ResourceExceptionHandlerTest {
         ResponseEntity<StandarError> response = exceptionHandler
                 .objectNotFound(new ObjectNotFoundException(OBJETO_NAO_ENCONTRADO),new MockHttpServletRequest());
 
+
         assertNotNull(response);
         assertNotNull(response.getBody());
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -39,6 +42,8 @@ class ResourceExceptionHandlerTest {
         assertEquals(StandarError.class,response.getBody().getClass());
         assertEquals(OBJETO_NAO_ENCONTRADO, response.getBody().getError());
         assertEquals(404,response.getBody().getStatus());
+        assertNotEquals("/user/2", response.getBody().getPath());
+        assertNotEquals(LocalDate.now(), response.getBody().getTimestamp());
 
     }
 
@@ -54,7 +59,7 @@ class ResourceExceptionHandlerTest {
         assertEquals(ResponseEntity.class,response.getClass());
         assertEquals(StandarError.class,response.getBody().getClass());
         assertEquals(EMAIL_JA_CADASTRADO, response.getBody().getError());
-        assertEquals(400,response.getBody().getStatus());
+        assertEquals(400 ,response.getBody().getStatus());
 
     }
 }
