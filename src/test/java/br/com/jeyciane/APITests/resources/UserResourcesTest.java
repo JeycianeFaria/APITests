@@ -95,11 +95,26 @@ class UserResourcesTest {
         assertEquals(HttpStatus.CREATED,response.getStatusCode());
         assertNotNull(response.getHeaders().get("Location")); //verificar se o header tem a chave location
 
-
     }
 
     @Test
-    void update() {
+    void whenUpdateThenReturnSuccess() {
+        when(service.update(userDTO)).thenReturn(user);
+        when(modelMapper.map(any(),any())).thenReturn(userDTO);
+
+        ResponseEntity<UserDTO> response = resources.update(ID,userDTO);
+
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertEquals(ResponseEntity.class,response.getClass());
+        assertEquals(UserDTO.class,response.getBody().getClass());
+        assertEquals(HttpStatus.OK,response.getStatusCode());
+
+        assertEquals(ID, response.getBody().getId());
+        assertEquals(EMAIL, response.getBody().getEmail());
+        assertEquals(NOME, response.getBody().getName());
+
+
     }
 
     @Test
