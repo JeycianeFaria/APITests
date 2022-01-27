@@ -1,5 +1,6 @@
 package br.com.jeyciane.APITests.resources.exceptions;
 
+import br.com.jeyciane.APITests.services.exceptions.DataIntegratyViolationException;
 import br.com.jeyciane.APITests.services.exceptions.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ResourceExceptionHandlerTest {
 
     public static final String OBJETO_NAO_ENCONTRADO = "Objeto não encontrado";
+    public static final String EMAIL_JA_CADASTRADO = "Email já cadastrado!";
     @InjectMocks
     private ResourceExceptionHandler exceptionHandler;
 
@@ -41,6 +43,18 @@ class ResourceExceptionHandlerTest {
     }
 
     @Test
-    void dataIntegratyViolationException() {
+    void dataIntegrityViolationException() {
+        ResponseEntity<StandarError> response = exceptionHandler
+                .dataIntegratyViolationException(new DataIntegratyViolationException(EMAIL_JA_CADASTRADO),
+                        new MockHttpServletRequest());
+
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(ResponseEntity.class,response.getClass());
+        assertEquals(StandarError.class,response.getBody().getClass());
+        assertEquals(EMAIL_JA_CADASTRADO, response.getBody().getError());
+        assertEquals(400,response.getBody().getStatus());
+
     }
 }
