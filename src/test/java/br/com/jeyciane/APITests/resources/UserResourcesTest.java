@@ -10,7 +10,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -62,11 +66,36 @@ class UserResourcesTest {
     }
 
     @Test
-    void findAll() {
+    void whenFindAllThenReturnAListOfUserDTO() {
+        when(service.findAll()).thenReturn(List.of(user));
+        when(modelMapper.map(any(),any())).thenReturn(userDTO);
+
+        ResponseEntity<List<UserDTO>> response = resources.findAll();
+
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode()); //aqui verifica se o status da resposta está correto
+        assertEquals(ResponseEntity.class, response.getClass()); //aqui verifica se a classe da resposta é um ResponseEntity
+        assertEquals(ArrayList.class, response.getBody().getClass()); //aqui verifica se a classe do corpo  da resposta é um ArrayList
+        assertEquals(UserDTO.class, response.getBody().get(INDEX).getClass()); //aqui verifica se o primeiro item(index 0) é um user dto
+
+        assertEquals(ID, response.getBody().get(INDEX).getId());
+        assertEquals(EMAIL, response.getBody().get(INDEX).getEmail());
+        assertEquals(NOME, response.getBody().get(INDEX).getName());
+        assertEquals(PASSWORD, response.getBody().get(INDEX).getPassword());
     }
 
     @Test
-    void create() {
+    void whenCreateThenReturnCreated() {
+        when(service.create(any())).thenReturn(user);
+
+        ResponseEntity<UserDTO> response = resources.create(userDTO);
+
+        assertEquals(ResponseEntity.class, response.getClass());
+        assertEquals(HttpStatus.CREATED,response.getStatusCode());
+        assertNotNull(response.getHeaders().get("Location")); //verificar se o header tem a chave location
+
+
     }
 
     @Test
